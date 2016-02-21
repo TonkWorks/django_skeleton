@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }}About{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="home" %}
+{% endblock %}
+
+{% block navbar-right %}
+  {% if not user.is_authenticated %}
+<a class="btn btn-default" href="{% url 'accounts:login' %}" role="button">Log in</a>
+<a class="btn btn-primary" href="{% url 'accounts:signup' %}" role="button">Sign up</a>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+<!-- Benefits of the Django application -->
+{% block container %}
+
+
+
+  
+<div id="sec3" class="text-page">
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h2>Example Page</h2>
+      </div>
+    </div>
+  </div>
+  <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+            <div class="col-lg-4">
+            </div>  
+
+            <div class="panel panel-default col-lg-4">
+              <div class="panel-heading">
+                <h3 class="panel-title">Contributer Supporter Status</h3>
+              </div>
+              <div class="panel-body" id="example_panel_body">
+              </div>
+            </div>  
+      </div>
+    </div>
+
+  <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+            <div class="col-lg-4">
+            </div>  
+
+            <div class="panel panel-default col-lg-4">
+              <div class="panel-heading">
+                <h3 class="panel-title">Example Advertisement Space</h3>
+              </div>
+              <div class="panel-body" id="advertisement_panel_body">
+              </div>
+            </div>  
+      </div>
+    </div>
+
+
+  </div> <!--Container -->
+
+
+</div>
+
+{% endblock container %}
+{% block scripts %}
+
+
+<script type="text/javascript">
+
+  function createCookie(name,value,days) {
+      if (days) {
+          var date = new Date();
+          date.setTime(date.getTime()+(days*24*60*60*1000));
+          var expires = "; expires="+date.toGMTString();
+      }
+      else var expires = "";
+      document.cookie = name+"="+value+expires+"; path=/";
+  }
+
+  function readCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+  }
+
+  function eraseCookie(name) {
+      createCookie(name,"",-1);
+  }
+  
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  }
+
+  function loadJSON(path, success, error)
+  {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function()
+      {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                  if (success)
+                      success(JSON.parse(xhr.responseText));
+              } else {
+                  if (error)
+                      error(xhr);
+              }
+          }
+      };
+      xhr.open("GET", path, true);
+      xhr.send();
+  }
+
+
+  var uuid = readCookie('uuid')
+  var support_map = readCookie('support_map')
+  var domain = document.domain;
+
+      loadJSON('/api/support/?format=json',
+               function(data) { 
+                  console.log(data); 
+
+                  var h = "";
+                  h += "cookie uuid: - " + uuid + "</br>";
+                  h += "support_map: - " + support_map + "</br>";
+                  h += "domain: - " + domain + "</br>";
+                  h += "api response: - " + data['results'] + "</br>";
+
+                  var contributer_status = false;
+                  if (data['results'].length > 0){
+                    contributer_status = true;
+                  }
+
+                  h += "contributer status - " + contributer_status + "</br>";
+                  document.getElementById("example_panel_body").innerHTML = h;
+
+
+                  if (contributer_status == false){
+                      ad_panel = "YOU SHOULD CONTRIBUTE! </br> <b>ADVERTISEMENT</b>"
+                  }
+                  else{
+                      ad_panel = "THANK YOU FOR CONTRIBUTING!"
+                  }
+                  document.getElementById("advertisement_panel_body").innerHTML = ad_panel;
+
+
+                },
+
+               function(xhr) { console.error(xhr); }
+      );
+
+
+  // function determineSupport(success, error){
+  //     loadJSON('/api/support/?format=json',
+  //              function(data) { 
+  //                 console.log(data); 
+
+  //                 var h = "";
+  //                 h += "cookie uuid: - " + uuid + "</br>";
+  //                 h += "support_map: - " + support_map + "</br>";
+  //                 h += "domain: - " + domain + "</br>";
+  //                 h += "api response: - " + data['results'] + "</br>";
+
+  //                 var contributer_status = false;
+  //                 if (data['results'].length > 0){
+  //                   contributer_status = true;
+  //                 }
+
+  //                 h += "contributer status - " + contributer_status + "</br>";
+  //                 document.getElementById("example_panel_body").innerHTML = h;
+
+
+
+  //                 ad_panel = "THANK YOU FOR CONTRIBUTING"
+  //                 ad_panel = "YOU SHOULD CONTRIBUTE! </br> <b>ADVERTISEMENT</b>"
+  //                 document.getElementById("advertisement_panel_body").innerHTML = ad_panel;
+
+
+  //               },
+
+  //              function(xhr) { console.error(xhr); }
+  //     );
+  // }
+
+  // function determineSupport(
+  //   function(data){
+  //     console.log('aaaaaa')
+  //   } 
+  // }
+  
+
+
+ </script>
+{% endblock scripts %}

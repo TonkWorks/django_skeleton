@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }}About{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="home" %}
+{% endblock %}
+
+{% block navbar-right %}
+  {% if not user.is_authenticated %}
+<a class="btn btn-default" href="{% url 'accounts:login' %}" role="button">Log in</a>
+<a class="btn btn-primary" href="{% url 'accounts:signup' %}" role="button">Sign up</a>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+<style type="text/css">
+/*
+    #localCanvas {
+      display: block;
+      position: absolute;
+    }
+
+    #localVideo {
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      -webkit-transition-property: opacity;
+      -webkit-transition-duration: 2s;
+      opacity: 0;
+    }*/
+    #logo {
+      display: block;
+      top:4;
+      right:4;
+      position:absolute;
+      float:right;
+      #opacity: 0.8;
+    }
+
+    #credit {
+      display: block;
+      top:28;
+      right:4;
+      position:absolute;
+      float:right;
+      font-size:10px;
+    }
+
+.facial_status{
+
+    font-size: 250%;
+
+
+}
+.loader {
+  margin: 100px auto;
+  font-size: 25px;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-animation: load5 1.1s infinite ease;
+  animation: load5 1.1s infinite ease;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+@-webkit-keyframes load5 {
+  0%,
+  100% {
+    box-shadow: 0em -2.6em 0em 0em #ffffff, 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.5), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7);
+  }
+  12.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.7), 1.8em -1.8em 0 0em #ffffff, 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5);
+  }
+  25% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.5), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7), 2.5em 0em 0 0em #ffffff, 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  37.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5), 2.5em 0em 0 0em rgba(255, 255, 255, 0.7), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.5), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.7), 0em 2.5em 0 0em #ffffff, -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  62.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.5), 0em 2.5em 0 0em rgba(255, 255, 255, 0.7), -1.8em 1.8em 0 0em #ffffff, -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  75% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.5), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.7), -2.6em 0em 0 0em #ffffff, -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  87.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.5), -2.6em 0em 0 0em rgba(255, 255, 255, 0.7), -1.8em -1.8em 0 0em #ffffff;
+  }
+}
+@keyframes load5 {
+  0%,
+  100% {
+    box-shadow: 0em -2.6em 0em 0em #ffffff, 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.5), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7);
+  }
+  12.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.7), 1.8em -1.8em 0 0em #ffffff, 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5);
+  }
+  25% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.5), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7), 2.5em 0em 0 0em #ffffff, 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  37.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5), 2.5em 0em 0 0em rgba(255, 255, 255, 0.7), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.5), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.7), 0em 2.5em 0 0em #ffffff, -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  62.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.5), 0em 2.5em 0 0em rgba(255, 255, 255, 0.7), -1.8em 1.8em 0 0em #ffffff, -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  75% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.5), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.7), -2.6em 0em 0 0em #ffffff, -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+  }
+  87.5% {
+    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.5), -2.6em 0em 0 0em rgba(255, 255, 255, 0.7), -1.8em -1.8em 0 0em #ffffff;
+  }
+}
+
+  </style>
+{% endblock extrahead %}
+
+<!-- Benefits of the Django application -->
+{% block container %}
+
+
+  <script type="text/javascript" src="/static/js/lib/ccv.js"></script>
+  <script type="text/javascript" src="/static/js/lib/face.js"></script>
+  <!-- Load the polyfill to switch-hit between Chrome and Firefox -->
+  <script src="/static/js/lib/adapter.js"></script>
+  <script src="/static/js/lib/common.js"></script>
+  
+<div id="sec3" class="text-page">
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h2>Login Page</h2>
+      </div>
+    </div>
+  </div>
+  <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+            <div class="col-lg-4">
+            </div>  
+
+            <div class="panel panel-default col-lg-4">
+              <div class="panel-heading">
+                <h3 class="panel-title">Status</h3>
+
+                  <div class="alert alert-success facial_status" role="alert">
+                    <div>
+                      <video id="localVideo" autoplay muted></video>
+                      <canvas width="500" height="500" id="localCanvas"></canvas>
+
+                    </div>
+
+                      <div class="loader">Loading...</div> Authenticating...
+
+
+                  </div>
+
+
+              </div>
+              <div class="panel-body" id="example_panel_body">
+              </div>
+            </div>  
+      </div>
+    </div>
+
+  <hr>
+
+
+
+  </div> <!--Container -->
+
+  <hr>
+<div class="loader">Loading...</div>
+
+</div>
+
+{% endblock container %}
+{% block scripts %}
+
+
+  <script type="text/javascript">
+    var localVideo;
+    var localCanvas;
+
+    initialize = function() {
+      localVideo = document.getElementById("localVideo");
+      localCanvas = document.getElementById("localCanvas");
+      try {
+        navigator.getUserMedia({video:true}, onGotStream, onFailedStream);
+    //trace("Requested access to local media");
+  } catch (e) {
+    alert("getUserMedia error " + e);
+    //trace_e(e, "getUserMedia error");
+  }
+}
+
+poll = function() {
+  var w = localVideo.videoWidth;
+  var h = localVideo.videoHeight;
+  var canvas = document.createElement('canvas');
+  canvas.width  = w;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(localVideo, 0, 0, w, h);
+  var comp = ccv.detect_objects({ "canvas" : ccv.grayscale(canvas),
+                                "cascade" : cascade,
+                                "interval" : 5,
+                                "min_neighbors" : 1 });
+  /* draw detected area */
+  localCanvas.width = localVideo.clientWidth;
+  localCanvas.height = localVideo.clientHeight;
+
+  var ctx2 = localCanvas.getContext('2d');
+  ctx2.lineWidth = 2;
+  ctx2.lineJoin = "round";
+  ctx2.clearRect (0, 0, localCanvas.width,localCanvas.height);
+
+  var x_offset = 0, y_offset = 0, x_scale = 1, y_scale = 1;
+  if (localVideo.clientWidth * localVideo.videoHeight > localVideo.videoWidth * localVideo.clientHeight) {
+    x_offset = (localVideo.clientWidth - localVideo.clientHeight *
+                localVideo.videoWidth / localVideo.videoHeight) / 2;
+  } else {
+    y_offset = (localVideo.clientHeight - localVideo.clientWidth *
+                localVideo.videoHeight / localVideo.videoWidth) / 2;
+  }
+  x_scale = (localVideo.clientWidth - x_offset * 2) / localVideo.videoWidth;
+  y_scale = (localVideo.clientHeight - y_offset * 2) / localVideo.videoHeight;
+
+  for (var i = 0; i < comp.length; i++) {
+    comp[i].x = comp[i].x * x_scale + x_offset;
+    comp[i].y = comp[i].y * y_scale + y_offset;
+    comp[i].width = comp[i].width * x_scale;
+    comp[i].height = comp[i].height * y_scale;
+
+    var opacity = 0.1;
+    if (comp[i].confidence > 0) {
+      opacity += comp[i].confidence / 10;
+      if (opacity > 1.0) opacity = 1.0;
+    }
+
+    //ctx2.strokeStyle = "rgba(255,0,0," + opacity * 255 + ")";
+    ctx2.lineWidth = opacity * 10;
+    ctx2.strokeStyle = "rgb(255,0,0)";
+    ctx2.strokeRect(comp[i].x, comp[i].y, comp[i].width, comp[i].height);
+  }
+  setTimeout(poll, 1000);
+}
+
+
+onGotStream = function(stream) {
+  localVideo.style.opacity = 1;
+  localVideo.srcObject = stream;
+  localStream = stream;
+
+  //trace("User has granted access to local media. url = " + url);
+  setTimeout(poll, 2000);
+}
+
+onFailedStream = function(error) {
+  alert("Failed to get access to local media. Error code was " + error.code + ".");
+  //trace_warning("Failed to get access to local media. Error code was " + error.code);
+}
+
+
+setTimeout(initialize, 1);
+</script>
+
+
+<script type="text/javascript">
+
+  function createCookie(name,value,days) {
+      if (days) {
+          var date = new Date();
+          date.setTime(date.getTime()+(days*24*60*60*1000));
+          var expires = "; expires="+date.toGMTString();
+      }
+      else var expires = "";
+      document.cookie = name+"="+value+expires+"; path=/";
+  }
+
+  function readCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+  }
+
+  function eraseCookie(name) {
+      createCookie(name,"",-1);
+  }
+  
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  }
+
+  function loadJSON(path, success, error)
+  {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function()
+      {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                  if (success)
+                      success(JSON.parse(xhr.responseText));
+              } else {
+                  if (error)
+                      error(xhr);
+              }
+          }
+      };
+      xhr.open("GET", path, true);
+      xhr.send();
+  }
+
+
+  var uuid = readCookie('uuid')
+  var support_map = readCookie('support_map')
+  var domain = document.domain;
+
+      loadJSON('/api/support/?format=json',
+               function(data) { 
+                  console.log(data); 
+
+                  var h = "";
+                  h += "cookie uuid: - " + uuid + "</br>";
+                  // h += "support_map: - " + support_map + "</br>";
+                  h += "domain: - " + domain + "</br>";
+
+                  // h += "api response: - " + data['results'] + "</br>";
+
+                  var contributer_status = false;
+                  if (data['results'].length > 0){
+                    contributer_status = true;
+                  }
+
+                  h += "contributer status - " + contributer_status + "</br>";
+                  document.getElementById("example_panel_body").innerHTML = h;
+
+
+                  // if (contributer_status == false){
+                  //     ad_panel = "YOU SHOULD CONTRIBUTE! </br> <b>ADVERTISEMENT</b>"
+                  // }
+                  // else{
+                  //     ad_panel = "THANK YOU FOR CONTRIBUTING!"
+                  // }
+                  // document.getElementById("advertisement_panel_body").innerHTML = ad_panel;
+
+
+                },
+
+               function(xhr) { console.error(xhr); }
+      );
+
+
+  // function determineSupport(success, error){
+  //     loadJSON('/api/support/?format=json',
+  //              function(data) { 
+  //                 console.log(data); 
+
+  //                 var h = "";
+  //                 h += "cookie uuid: - " + uuid + "</br>";
+  //                 h += "support_map: - " + support_map + "</br>";
+  //                 h += "domain: - " + domain + "</br>";
+  //                 h += "api response: - " + data['results'] + "</br>";
+
+  //                 var contributer_status = false;
+  //                 if (data['results'].length > 0){
+  //                   contributer_status = true;
+  //                 }
+
+  //                 h += "contributer status - " + contributer_status + "</br>";
+  //                 document.getElementById("example_panel_body").innerHTML = h;
+
+
+
+  //                 ad_panel = "THANK YOU FOR CONTRIBUTING"
+  //                 ad_panel = "YOU SHOULD CONTRIBUTE! </br> <b>ADVERTISEMENT</b>"
+  //                 document.getElementById("advertisement_panel_body").innerHTML = ad_panel;
+
+
+  //               },
+
+  //              function(xhr) { console.error(xhr); }
+  //     );
+  // }
+
+  // function determineSupport(
+  //   function(data){
+  //     console.log('aaaaaa')
+  //   } 
+  // }
+  
+
+
+ </script>
+{% endblock scripts %}

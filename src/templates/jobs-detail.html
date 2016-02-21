@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }}About{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="about" %}
+{% endblock %}
+
+<!-- Benefits of the Django application -->
+{% block container %}
+
+
+
+  
+<div id="sec3" class="text-page">
+
+
+  <div class="container">
+      <div class="row">
+          <div id="">
+              <h2>{{job.title|safe}} - {{job.clearance}}</h2>
+              <h4>{{job.company|safe}}</h4>
+              <div>
+                  <span class="">Posted: {{job.pub_date|date:"M d, Y" }}</span>
+              </div> 
+              <hr>
+              <p>
+                {{job.description|safe}}
+              </p>
+              <hr>
+              {% if job.link|length > 3 %}
+              <h4>
+                To Apply, visit:  <a href="{{job.link|safe}}">{{job.link|safe}}</a>
+              </h4>
+              {% endif %}
+              {% if job.email|length > 3 %}
+              <h4>
+                To Apply, send an e-mail to: <a href="Mailto:{{job.email|safe}}">{{job.email|safe}}</a>
+              </h4>
+              {% endif %}
+
+          </div>
+      </div>
+
+  </div> <!--Container -->
+
+
+</div>
+
+{% endblock container %}
+
+{% block scripts %}
+  <script>
+  </script>
+{% endblock scripts %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load thumbnail %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}{{ block.super }}About{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="about" %}
+{% endblock %}
+
+<!-- Benefits of the Django application -->
+{% block container %}
+
+
+
+  
+<div id="sec3" class="text-page">
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h2>Events</h2>
+        <p class="lead"></p>
+      </div>
+    </div>
+      <div class="row">
+          <div id="results">
+
+              {% for r in results %}
+                <div class="row">
+                    <div class="col-offset-1 col-sm-2">
+                      <a href="/events/{{r.id}}">
+                        <img title="profile picture" class="img img-responsive" src="{% thumbnail r.picture|default:'default_event.png' 150x150 %}">
+                      </a>
+                    </div>
+                    <div class="col-sm-9">
+                        <h4><a href="/events/{{r.id}}">{{r.title|safe}}</a></h4>
+                        <div>
+                            <span class="">{{r.date}}</span>
+                        </div> 
+                    </div> 
+                </div>
+                <hr>
+              {% endfor %}
+
+
+
+          </div>
+      </div>
+
+  </div> <!--Container -->
+
+
+</div>
+
+{% endblock container %}
+
+{% block scripts %}
+  <script>
+  </script>
+{% endblock scripts %}

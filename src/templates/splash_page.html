@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load thumbnail %}
+
+{% block title %}{{ block.super }}Home{% endblock %}
+
+{% block navbar-left %}
+  {% include "_navbar.html" with active_link="home" %}
+{% endblock %}
+
+{% block navbar-right %}
+  {% if not user.is_authenticated %}
+<a class="btn btn-default" href="{% url 'accounts:login' %}" role="button">Log in</a>
+<a class="btn btn-primary" href="{% url 'accounts:signup' %}" role="button">Sign up</a>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
+
+{% block splash %}
+  <div class="jumbotron jumbotron-carousel corporate-jumbo">
+
+
+    <div class="container">
+        <div class="col-md-4 col-sm-4">
+          <h1>{% include "_brandname.html" %}</h1>
+          <p>Keep up with the latest events, jobs and news.</p>
+	  <a class="btn btn-primary" href="{% url 'accounts:signup' %}" role="button">Sign up for Free!</a>
+        </div>
+        <div class="col-md-offset-2 col-md-6 col-sm-6">
+
+            <div class="col-md-5 text-center alpha60">
+                  <div class="col-md-12 text-center">
+                    <h3><a href="/jobs/">New Jobs</a></h3>
+                  </div>
+                  {% for r in jobs %}
+                      <h4><a href="/jobs/{{r.id}}">{{r.title|safe}} - {{r.clearance}}</a></h4>
+                      {{r.company|safe}}
+                      <hr>
+                  {% endfor %}
+            </div>
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-5 text-center alpha60">
+                  <div class="col-md-12 text-center">
+                    <h3><a href="/events/">Upcomming Events</a></h3>
+                  </div>
+                  {% for r in events %}
+                        <h4><a href="/events/{{r.id}}">{{r.title|safe}}</a></h4>
+                        <div>
+                            <span class="">{{r.location}}</span></br>
+                            <span class="">{{r.date}}</span>
+                        </div> 
+                      <hr>
+                  {% endfor %}
+            </div>
+
+      </div>
+    </div>
+  </div>
+{% endblock splash %}
+
+{% block container %}
+<!-- Benefits of the Django application -->
+<a name="about"></a>
+
+{% endblock container %}
+
+{% block scripts %}
+<script src="{% static 'site/js/site.js' %}"></script>
+{% endblock scripts %}
+
